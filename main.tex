@@ -1,0 +1,96 @@
+% ----------------------------------------------------------------------------------------------------------------
+% This .tex file (and associated .cls V3.2SP) *DOES NOT* produce:
+%       1) The Permission Statement
+%       2) The Conference (location) Info information
+%       3) The Copyright Line with ACM data
+%       4) Page numbering
+% ---------------------------------------------------------------------------------------------------------------
+
+\documentclass{acm_proc_article-sp}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{stackrel}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{verbatim}
+\usepackage{multirow}
+\usepackage{fancybox}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{blkarray}
+%\usepackage{pdflscape}
+%\usepackage{amsthm}
+%\usepackage{fullpage}
+%\usepackage{rotating}
+
+\begin{document}
+
+%\title{Mining Semantically Associated Itemsets from Ontology-Annotated Data}
+\title{Mining Data and Ontologies Seamlessly with RDF Hypergraphs}
+
+\numberofauthors{5}
+\author{
+% one 'row of three' or two rows (consisting of one row of three and a second row of one, two or three).
+% 1st. author
+\alignauthor
+Haishan Liu\\
+       \affaddr{University of Oregon}\\
+       \affaddr{Eugene, OR, 97403, USA}\\
+       \email{ahoyleo@cs.uoregon.edu}
+% 2nd. author
+\alignauthor Dejing Dou\\
+       \affaddr{University of Oregon}\\
+       \affaddr{Eugene, OR, 97403, USA}\\
+       \email{dou@cs.uoregon.edu}
+% 3rd. author
+\alignauthor Paea LePendu\\
+       \affaddr{Stanford University}\\
+       \affaddr{Stanford, CA, 94305, USA}\\
+       \email{plependu@stanford.edu}
+\and  % use '\and' if you need 'another row' of author names
+% 4th. author
+\alignauthor Ruoming Jin\\
+       \affaddr{Kent State University}\\
+       \affaddr{Kent, OH, 44242, USA}\\
+       \email{jin@cs.kent.edu}
+\alignauthor Nigam Shah\\
+       \affaddr{Stanford University}\\
+       \affaddr{Stanford, CA, 94305, USA}\\
+       \email{nigam@stanford.edu}
+}
+\date{20 January 2012}
+
+\maketitle
+\begin{abstract}
+In this paper, we address an interesting data mining problem of finding semantically associated itemsets (i.e., items connected via indirect links) on ontology-annotated datasets. Semantically rich datasets, such as those annotated by formal ontologies and represented in RDF or OWL, can be viewed as datasets embedded with domain knowledge. This new standard of representation provides a unique opportunity to mine the data and domain knowledge simultaneously. In this paper, we develop a way to represent both data and ontology in a unified graph representation, and we propose to use random walk with restart to efficiently calculate the similarity between items so as to determine their associations from very large size of data and ontologies.
+We show the proposed method is indeed capable of capturing semantically associated itemsets while seamlessly incorporate domain knowledge defined in ontologies through experiments performed with real life data and ontologies. The semantically associated itemsets discovered in our experiment is promising to provide valuable insights on interrelationship between medical concepts and other domain specific ones.
+
+\end{abstract}
+
+%\category{H.2.8}{Database Management}{Data Mining}
+%\terms{Algorithms, Theory}
+
+\keywords{Semantic Data Mining, Random Walk, Semantically Associated Itemset} % NOT required for Proceedings
+
+%\theoremstyle{definition}
+\newtheorem{myexp}{Example}[section]
+\newtheorem{mydef}{Definition}[section]
+\newtheorem{mythm}{Theorem}[section]
+\newtheorem{mylem}{Lemma}[section]
+\input{introduction}
+%\input{related}
+\input{method}
+\input{experiment}
+\input{discussion}
+\input{conclusion}
+
+%ACKNOWLEDGMENTS are optional
+%\input{Acknowledgments}
+
+\bibliographystyle{abbrv}
+\bibliography{dou,prop,thesis,paea}
+
+
+
+\end{document}
