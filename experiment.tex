@@ -1,6 +1,6 @@
-\section{Experiment Results}
+\section{Experiment}
 \label{experiment}
-In this section, we evaluate the method of random walk with restart on the combined RDF bipartite graph for discovering semantic associations. We conducted a series of experiments to highlight the effect of the incorporating the ontologies in the mining task. We evaluated our methods on an \emph{electronic health records} dataset to highlight its scalability and applicability for problems in the biomedical domain. 
+In this section, we evaluate the method of random walk with restart on the combined RDF bipartite graph for discovering semantic associations. We conducted a series of experiments to highlight the effect of the incorporating the ontologies in the mining task. We evaluated our methods on an \emph{electronic health records} dataset to highlight its scalability and applicability for problems in the biomedical domain.
 
 \subsection{Dataset}
 In our second evaluation, we analyzed the electronic health records of real patients. The patient clinical note data are from Stanford Hospital's Clinical Data Warehouse (STRIDE). These records archive over 17-years worth of patient data comprising of 1.6 million patients, 15 million encounters, 25 million coded ICD9 diagnoses, and a combination of pathology, radiology, and transcription reports totaling over 9 million clinical notes (i.e., unstructured text).
@@ -9,34 +9,41 @@ We obtained the set of drugs and diseases for each patient's clinical note by us
 
 One strength of the Annotator is the highly comprehensive and interlinked lexicon that it uses. It can incorporate the entire NCBO BioPortal ontology library of over 250 ontologies to identify biomedical concepts from text using a dictionary of terms generated from those ontologies. Terms from these ontologies are linked together via mappings. For this study, we specifically configured the workflow to use a subset of those ontologies that are most relevant to clinical domains, including Unified Medical Language System (UMLS) terminologies such as SNOMED-CT, the National Drug File (NDFRT) and RxNORM, as well as ontologies like the Human Disease Ontology. The resulting set of ontologies contains 1 million subsumption statements.
 
-From this set of 1.6 million patients with annotated records, we vectorize texts and turned them into a huge bag-of-word representation, from which an RDF bipartite graph is constructed, including 148 million RDF statements for the data. 
+From this set of 1.6 million patients with annotated records, we vectorize texts and turned them into a huge bag-of-word representation, from which an RDF bipartite graph is constructed, including 148 million RDF statements for the data.
 
 To highlight the capability of our method for incorporating multiple types of relationships, we also explore the ``may\_treat" relationship between drugs and diseases defined in NDFRT ontology, for example, Thiabendazole may\_treat Larva Migrans. In the experiment, we extracted 44k may\_treat statements from the ontology. Since we are interested in learning the interaction between drugs and diseases, may\_treat is naturally a better indicator relationship to include while mining semantic associations than the subsumption relationship. Our results below illustrate this point.
 
 We applied our algorithms to all previous records in the patient's timeline, looking at just the set of drugs and their semantically related diseases. Therefore, at a very simplistic level, the experiment result shows that strong semantically associated items in this context could possibly represent sets of drugs that could lead toward certain diseases. To summarize, the size of the dataset in terms of numbers of RDF statements in the bipartite graph is shown in Table~\ref{tbl:exp_overview}.
 
 
-\begin{table*}[tbh]\scriptsize
+\begin{table}[tbh]\scriptsize
 \begin{center}
 \begin{tabular}{c|c|c}
 \hline
-  \# data triples & \# \emph{is\_a} relationships & \# other relationships \\
+  \# data stmts & \# isa stmts & \# may\_treat stmts \\
   \hline
   148,690,056  & 1,048,604 &    43780\\
   \hline
 \end{tabular}
 \end{center}
-\caption{\label{tbl:exp_overview} The \emph{shopping cart} and \emph{healthcare} datasets vary in size of data, size of ontology, and in the kinds of relationships defined by the ontology.}
-\end{table*}
+\caption{\label{tbl:exp_overview} Numbers of RDF statements in the unified bipartite graph extracted from the Electronic Health dataset. }
+\end{table}
 
 
 \subsection{Results}
-Before studying the drug-disease association, we carried out a similar test to that on the shopping cart dataset, in which we focus on studying the drug-drug and disease-disease association. To this purpose, we combine the subsumption hierarchy in the ontology graph with the data graph. Table~\ref{tbl:health_comp} shows the ranked semantic association for the query term ``Rofecoxib" (an active ingredient of some anti-inflammatory drugs) given different weight configuration to combine graphs. Without any preprocessing and prior knowledge about how the clinical notes are prescribed, the incorporation of subsumption relationship can be seen as a mean for denoising and enhancement of the data. Given the ratio of the size of the ontology to the size of data, the data graph in this test is more dominant in determining the ranking than in the shopping cart experiment. One can gradually change the ratio of $w_o$ to $w_d$ to strike a balance and achieve the optimal result.
+Before studying the drug-disease association, we first carried out a study on the drug-drug association. To this purpose, we combine the subsumption hierarchy in the ontology graph with the data graph. Table~\ref{tbl:health_comp} shows the top terms associated with \emph{rofecoxib} given different configurations of the unifed graphs. Rofecoxib is the active ingredient of the drug \emph{Vioxx}, which was recalled in 2005 because it was causing an increased risk of heart attacks. Vioxx is one of several non-steroidal anti-inflammatory drugs part of the COX-2 inhibitor class of drugs.
+
+In the top results, with only the ontology graph, the algorithm picks up almost all other active ingredients part of the COX-2 inhibitor class of drugs (valdecoxib, celecoxib, etc.). Drugs of the COX inhibitor (the parent of COX-2) class also appear in the top results (meloxicam, nabumetone, etc). These are indeed semantic associations since the top items are related to rofecoxib indirectly through parent classes. It is worth noticing that, although rofecoxib is a subclass of COX-2 inhibitor drugs, it is also a derived class from a much broader parent called ``Drug Products by Generic Ingredient Combinations," whose subclasses are organized by descendants' initial alphabets. In other words, rofecoxib is a direct child of a class that contains all drug ingredients starting with the letter R. The fact that our algorithm selects the neighboring class of rofecoxib in the COX-2/COX family instead in the R-initialed family demonstrates its capability of discovering interesting and meaningful semantic associations. An ontology inference engine that is able to derive sibling classes would never be able to achieve the same meaningful ranking as our algorithm does in this case.
+
+Without any preprocessing and prior knowledge about how the clinical notes are prescribed, the results with data graph alone do not seem to have a strong pattern because of the appearance of too many general terms. The noteworthy inclusion of ``reflux," ``infantile" may be due to the causal relationships between rofecoxib and acid reflux and infantile gastroenteritis respectively that have been shown in previous studies. Applying general information extraction techniques, such as pruning out general terms (``medical history, " ``today," etc.) should be able to improve the performance with data graph alone. 
+
+On the other hand, adding the is\_a graph to the data graph can be also seen as a mean for denoising and enhancement of the data. In the results with both data and is\_a graphs, valdecoxib and celecoxib are promoted to the top results. This suggests that the evidences from both data and ontology conforms with previous studies in which celecoxib, valdecoxib are shown to be, similar to rofecoxib, also associated with increased risk of cardiovascular pathologies.
+
 \begin{table*}[tbh]\scriptsize
 \begin{center}
 \begin{tabular}{ c | c | c | c  }
 \hline
-rank    &   w/ data only	&	w/ onto only		&$w_o=10000, w_d=1$	 \\
+rank    &   w/ data only	&	w/ is\_a only		& w/ both data and is\_a \\
 \hline
 1	&		reflux	&	valdecoxib	&		reflux	\\
 2	&		medical history	&	meloxicam	&		obstruction	\\
@@ -60,10 +67,9 @@ We observe that the ranking based on data graph alone is fairly high already, co
 
 \begin{table*}[tbh]\scriptsize
 \begin{center}
-\begin{tabular}{ c || c  c || c  c || c  c }
+\begin{tabular}{ c | c  c | c  c | c  c }
 \hline
-        &   \multicolumn{2}{c||}{w/ data only}  &   \multicolumn{2}{c||}{w/ data and ``isa"} & \multicolumn{2}{c}{w/ data and ``may\_treat"}\\
-\hline
+        &   \multicolumn{2}{c|}{w/ data only}  &   \multicolumn{2}{c|}{w/ data and ``isa"} & \multicolumn{2}{c}{w/ data and ``may\_treat"}\\
 \hline
                         	&   p(\%)   &   rank    &   p(\%)    &   rank    &   p(\%)    &    rank    \\
 \hline
@@ -92,10 +98,9 @@ $\langle troglitazone, diabetes\rangle$  &   0.006   &   478     &   0.005    & 
 
 \begin{table*}[tbh]\scriptsize
 \begin{center}
-\begin{tabular}{ c || c  c || c  c }
+\begin{tabular}{ c | c  c | c  c }
 \hline
-        &   \multicolumn{2}{c||}{w/ noisy may\_treat only}    &   \multicolumn{2}{c}{w/ data and noisy may\_treat}\\
-\hline
+        &   \multicolumn{2}{c|}{w/ noisy may\_treat only}    &   \multicolumn{2}{c}{w/ data and noisy may\_treat}\\
 \hline
        	&   p(\%)   &   rank    &  p(\%)    &    rank    \\
 \hline
